@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina Translate | Premium Real-time Translation Tool</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Lumina Translate is a premium, responsive language translation web application with instant text-to-speech, voice typing, translation history, and professional API support.">
+  <meta name="keywords" content="translation, language translator, text to speech, dictation, multi-language translator, Lumina Translate">
+  <meta name="author" content="Lumina Translate Dev Team">
+  
+  <!-- Google Fonts - Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- Main Grid Background Animation elements -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <i class="fa-solid fa-language"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Lumina <span>Translate</span></h1>
+          <p>Next-gen intelligent translation assistant</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="settingsBtn" class="btn-icon" title="Configure Translation Settings" aria-label="Settings">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Main Translate Card Wrapper -->
+    <main class="translation-wrapper">
+      <div class="translation-card">
+        
+        <!-- Input Panel -->
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <label for="sourceLangSelect" class="sr-only">Source Language</label>
+            <div class="select-wrapper">
+              <i class="fa-solid fa-globe select-icon"></i>
+              <select id="sourceLangSelect" aria-label="Source Language">
+                <!-- Javascript will populate this -->
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+            
+            <div class="panel-header-actions">
+              <button id="speechInputBtn" class="btn-icon-subtle" title="Start voice typing (English supported)" aria-label="Voice input">
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+              <button id="clearBtn" class="btn-icon-subtle" title="Clear text" aria-label="Clear text">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="panel-body">
+            <textarea id="inputText" placeholder="Type or paste text to translate..." maxlength="5000" spellcheck="false" autocomplete="off" aria-label="Text to translate"></textarea>
+          </div>
+          
+          <div class="panel-footer">
+            <span class="char-counter" id="charCount">0 / 5000</span>
+          </div>
+        </div>
+        
+        <!-- Intermediate Control Bar -->
+        <div class="control-bar">
+          <button id="swapBtn" class="btn-swap" title="Swap languages" aria-label="Swap source and target languages">
+            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          </button>
+          
+          <button id="translateBtn" class="btn-translate">
+            <span>Translate</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+        
+        <!-- Output Panel -->
+        <div class="panel output-panel">
+          <!-- Spinner Overlay -->
+          <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="spinner-container">
+              <div class="double-bounce1"></div>
+              <div class="double-bounce2"></div>
+            </div>
+            <p>Translating...</p>
+          </div>
+          
+          <div class="panel-header">
+            <label for="targetLangSelect" class="sr-only">Target Language</label>
+            <div class="select-wrapper">
+              <i class="fa-solid fa-globe select-icon"></i>
+              <select id="targetLangSelect" aria-label="Target Language">
+                <!-- Javascript will populate this -->
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+            
+            <div class="panel-header-actions">
+              <button id="speakBtn" class="btn-icon-subtle" title="Listen to translation" aria-label="Speak translation" disabled>
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <button id="copyBtn" class="btn-icon-subtle" title="Copy to clipboard" aria-label="Copy translated text" disabled>
+                <i class="fa-solid fa-copy"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="panel-body">
+            <textarea id="outputText" placeholder="Translation will appear here..." readonly aria-label="Translated text"></textarea>
+          </div>
+          
+          <div class="panel-footer">
+            <span class="status-msg" id="statusMessage">Ready</span>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    <!-- Error banner -->
+    <div id="errorBanner" class="error-banner hidden">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span id="errorMessage">An error occurred during translation.</span>
+      <button id="closeErrorBtn" class="btn-close-subtle" aria-label="Close error message">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <!-- History & Stats Section -->
+    <section class="secondary-section">
+      <div class="history-container">
+        <div class="section-header">
+          <h2><i class="fa-solid fa-clock-rotate-left"></i> Translation History</h2>
+          <button id="clearHistoryBtn" class="btn-text-only" title="Clear all saved history">
+            <i class="fa-solid fa-trash-can"></i> Clear History
+          </button>
+        </div>
+        
+        <div id="historyList" class="history-list">
+          <!-- Populated dynamically via JS -->
+          <div class="history-empty">
+            <i class="fa-solid fa-folder-open"></i>
+            <p>Your recent translations will be saved here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 Lumina Translate. Elegant translation experience built with Web APIs.</p>
+    </footer>
+    
+  </div>
+  
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle"><i class="fa-solid fa-sliders"></i> Translation Engine Settings</h3>
+        <button id="closeSettingsBtn" class="btn-close-modal" aria-label="Close settings">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="settings-group">
+          <label for="apiEngineSelect">Translation Engine</label>
+          <div class="select-wrapper">
+            <select id="apiEngineSelect">
+              <option value="google-free">Google Translate (Free Client API - No Key Needed)</option>
+              <option value="google-cloud">Google Cloud Translation API (V2 - Key Required)</option>
+              <option value="libre-translate">LibreTranslate API (Custom Server / Key Optional)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-chevron"></i>
+          </div>
+        </div>
+        
+        <!-- Google Cloud Translation API Config Group -->
+        <div id="googleConfigGroup" class="settings-config-group hidden">
+          <div class="settings-group">
+            <label for="googleApiKey">Google Cloud API Key</label>
+            <div class="input-password-wrapper">
+              <input type="password" id="googleApiKey" placeholder="Enter API Key">
+              <button class="btn-toggle-visibility" type="button" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <p class="field-hint">You can create an API key in the Google Cloud Console under APIs & Services > Credentials.</p>
+          </div>
+        </div>
+        
+        <!-- LibreTranslate API Config Group -->
+        <div id="libreConfigGroup" class="settings-config-group hidden">
+          <div class="settings-group">
+            <label for="libreUrl">LibreTranslate Instance URL</label>
+            <input type="url" id="libreUrl" placeholder="https://translate.example.com" value="https://libretranslate.de">
+          </div>
+          <div class="settings-group">
+            <label for="libreApiKey">LibreTranslate API Key (Optional)</label>
+            <div class="input-password-wrapper">
+              <input type="password" id="libreApiKey" placeholder="Enter API Key if needed">
+              <button class="btn-toggle-visibility" type="button" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <p class="field-hint">Required for some public LibreTranslate instances, or if hosting a secure private instance.</p>
+          </div>
+        </div>
+        
+        <div class="settings-actions">
+          <button id="saveSettingsBtn" class="btn-primary-small">Save Configuration</button>
+          <button id="resetSettingsBtn" class="btn-secondary-small">Reset to Defaults</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <!-- Core Logic Script -->
+  <script src="script.js"></script>
+</body>
+</html>
